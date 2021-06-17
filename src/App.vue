@@ -5,33 +5,24 @@
       title="Task Tracer"
       :showAddTask="showAddTask"
     />
-    <div v-show="showAddTask">
-      <AddTask @add-task="addTask" />
-    </div>
 
-    <Tasks
-      @toggle-reminder="toggleReminder"
-      @delete-task="deleteTask"
-      :tasks="tasks"
-    />
+    <router-view :showAddTask="showAddTask"> </router-view>
+    <Footer />
   </div>
 </template>
 
 <script>
 import Header from "./components/Header.vue";
-import Tasks from "./components/Tasks.vue";
-import AddTask from "./components/AddTask.vue";
+import Footer from "./components/Footer.vue";
 
 export default {
   name: "App",
   components: {
     Header,
-    Tasks,
-    AddTask,
+    Footer,
   },
   data() {
     return {
-      tasks: [],
       showAddTask: false,
     };
   },
@@ -39,37 +30,6 @@ export default {
     toggleAddTask() {
       this.showAddTask = !this.showAddTask;
     },
-    addTask(task) {
-      this.tasks = [...this.tasks, task];
-    },
-    deleteTask(id) {
-      if (confirm("Are you sure?")) {
-        this.tasks = this.tasks.filter((task) => task.id !== id);
-      }
-    },
-    toggleReminder(id) {
-      this.tasks = this.tasks.map((task) =>
-        task.id === id ? { ...task, reminder: !task.reminder } : task
-      );
-    },
-
-    async fetchTasks() {
-      const res = await fetch("http://localhost:5000/tasks");
-
-      const data = await res.json();
-
-      return data;
-    },
-    async fetchTask(id) {
-      const res = await fetch(`api/tasks/${id}`);
-
-      const data = await res.json();
-
-      return data;
-    },
-  },
-  async created() {
-    this.tasks = await this.fetchTasks();
   },
 };
 </script>
